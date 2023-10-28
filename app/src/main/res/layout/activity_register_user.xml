@@ -55,6 +55,7 @@
                         android:layout_margin="5dp">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/nameET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Name" />
@@ -66,9 +67,11 @@
                         android:layout_margin="5dp">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/mobileET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Mobile" />
+                            android:hint="Mobile"
+                            android:inputType="number" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -77,8 +80,10 @@
                         android:layout_margin="5dp">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/emailET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress"
                             android:hint="Email" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -88,9 +93,25 @@
                         android:layout_margin="5dp">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/adressET"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Address" />
+                            android:hint="Address"
+                            android:inputType="text|textPostalAddress" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:visibility="gone">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/passwordET"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Password"
+                            android:inputType="text|textPostalAddress" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
