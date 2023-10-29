@@ -69,13 +69,15 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/CcountTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/textView3"
                     android:gravity="center"
                     android:text="0"
-                    android:textSize="16sp" />
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
@@ -102,13 +104,15 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/TcountTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/textView2"
                     android:gravity="center"
                     android:text="0"
-                    android:textSize="16sp" />
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 

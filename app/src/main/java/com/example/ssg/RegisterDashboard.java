@@ -6,22 +6,36 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class RegisterDashboard extends AppCompatActivity {
 
     ImageView menuBtn;
 
+    TextView CcountTV,TcountTV;
     SharedPreferences sharedPreferences;
 
     @Override
@@ -30,8 +44,11 @@ public class RegisterDashboard extends AppCompatActivity {
         setContentView(R.layout.activity_register_dashboard);
 
         menuBtn = findViewById(R.id.menuBtn);
+        CcountTV = findViewById(R.id.CcountTV);
+        TcountTV = findViewById(R.id.TcountTV);
 
         sharedPreferences = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
+        String Umobile = sharedPreferences.getString("Username"," ");
         menuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,7 +59,8 @@ public class RegisterDashboard extends AppCompatActivity {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.action_profile) {
-                            Toast.makeText(RegisterDashboard.this, "Profile open", Toast.LENGTH_SHORT).show();
+
+                            startActivity(new Intent(RegisterDashboard.this, UserProfile.class));
                         } else if (item.getItemId() == R.id.action_logout) {
 
                             SharedPreferences.Editor editor =   sharedPreferences.edit();
@@ -104,6 +122,59 @@ public class RegisterDashboard extends AppCompatActivity {
 
             }
         });
+
+
+        getRcount(Umobile);
+    }
+
+    private void getRcount(String mob) {
+
+        ProgressDialog dialog = new ProgressDialog(RegisterDashboard.this);
+        dialog.setCancelable(false);
+        dialog.setMessage("Please wait..");
+        dialog.show();
+        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/getRegistrationCount.php?Referby=SSG-"+mob+"", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject object = jsonArray.getJSONObject(i);
+
+                        String Ccount = object.getString("Ccount");
+                        String Tcount = object.getString("Tcount");
+
+                        CcountTV.setText(Ccount);
+                        TcountTV.setText(Tcount);
+
+                        dialog.dismiss();
+
+
+                    }
+
+
+                } catch (Exception e) {
+                    dialog.dismiss();
+                    e.printStackTrace();
+
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(RegisterDashboard.this, "Something went wrong try later..", Toast.LENGTH_SHORT).show();
+                Log.e("UserLoginLog",error.getMessage());
+                dialog.dismiss();
+            }
+        });
+
+        RequestQueue queue = Volley.newRequestQueue(RegisterDashboard.this);
+        queue.add(request);
     }
 
     @SuppressLint("MissingSuperCall")

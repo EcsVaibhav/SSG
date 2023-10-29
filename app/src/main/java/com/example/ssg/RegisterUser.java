@@ -22,7 +22,8 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 public class RegisterUser extends AppCompatActivity {
 
     String product,uName,uMobile,uMail,uAddress;
@@ -83,7 +84,13 @@ public class RegisterUser extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
         String RMobile = sharedPreferences.getString("Username","");
 
-        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/registerUser.php?Name="+uName+"&Mobile="+uMobile+"&Email="+uMail+"&Address="+uAddress+"&Password="+uMobile+"&ReferalCode=SSG-"+RMobile+"&Product="+product+"", new Response.Listener<String>() {
+        Date currentDate = new Date();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        String TodayDate = dateFormat.format(currentDate);
+
+        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/registerUser.php?Name="+uName+"&Mobile="+uMobile+"&Email="+uMail+"&Address="+uAddress+"&Password="+uMobile+"&ReferalCode=SSG-"+RMobile+"&Product="+product+"&RegisterDate="+TodayDate+"&AccountID=SSG-"+uMobile+"", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals("exits")){
