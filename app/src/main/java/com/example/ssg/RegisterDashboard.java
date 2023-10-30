@@ -31,8 +31,11 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import meow.bottomnavigation.MeowBottomNavigation;
+
 public class RegisterDashboard extends AppCompatActivity {
 
+    MeowBottomNavigation bottomNavigation;
     ImageView menuBtn;
 
     TextView CcountTV,TcountTV;

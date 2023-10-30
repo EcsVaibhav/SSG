@@ -15,6 +15,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildFeatures {
+        dataBinding = true
+    }
 
     buildTypes {
         release {
@@ -42,4 +45,7 @@ dependencies {
 
     implementation("com.airbnb.android:lottie:6.1.0")
     implementation("com.android.volley:volley:1.2.1")
+    implementation("com.etebarian:meow-bottom-navigation:1.3.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22")
+
 }

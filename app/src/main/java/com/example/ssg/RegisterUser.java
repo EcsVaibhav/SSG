@@ -27,7 +27,7 @@ import java.util.Date;
 public class RegisterUser extends AppCompatActivity {
 
     String product,uName,uMobile,uMail,uAddress;
-    EditText NameEt,MobileEt,MailEt,AddressEt,passwordET;
+    EditText NameEt,MobileEt,MailEt,AddressEt,NomineeEt,BAccountNoET,ifscCodeET,BanknameET,BAHnameET;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,11 @@ public class RegisterUser extends AppCompatActivity {
         MobileEt = findViewById(R.id.mobileET);
         MailEt = findViewById(R.id.emailET);
         AddressEt = findViewById(R.id.adressET);
-        passwordET = findViewById(R.id.passwordET);
+        NomineeEt = findViewById(R.id.NomineeEt);
+        BAccountNoET = findViewById(R.id.BAccountNoET);
+        ifscCodeET = findViewById(R.id.ifscCodeET);
+        BanknameET = findViewById(R.id.BanknameET);
+        BAHnameET = findViewById(R.id.BAHnameET);
 
         product = getIntent().getStringExtra("Product");
         
@@ -51,6 +55,11 @@ public class RegisterUser extends AppCompatActivity {
                 uMail = MailEt.getText().toString().trim();
                 uAddress = AddressEt.getText().toString().trim();
 
+                String nominee = NomineeEt.getText().toString().trim();
+                String Baccountno = BAccountNoET.getText().toString().trim();
+                String ifsccode = ifscCodeET.getText().toString().trim();
+                String bankname = BanknameET.getText().toString().trim();
+                String BAHname = BAHnameET.getText().toString().trim();
 
                 if (uName.isEmpty()){
                     Toast.makeText(RegisterUser.this, "Please enter Name", Toast.LENGTH_SHORT).show();
@@ -60,11 +69,19 @@ public class RegisterUser extends AppCompatActivity {
                     Toast.makeText(RegisterUser.this, "Enter Valid Email", Toast.LENGTH_SHORT).show();
                 }else if (uAddress.isEmpty()){
                     Toast.makeText(RegisterUser.this, "Enter Address", Toast.LENGTH_SHORT).show();
-                }/*else if (uPassword.isEmpty()){
-                    Toast.makeText(RegisterUser.this, "Enter Password", Toast.LENGTH_SHORT).show();
-                }*/else {
+                }else if (nominee.isEmpty()){
+                    Toast.makeText(RegisterUser.this, "Enter Nominee", Toast.LENGTH_SHORT).show();
+                }else if (Baccountno.isEmpty()){
+                    Toast.makeText(RegisterUser.this, "Enter Bank account number", Toast.LENGTH_SHORT).show();
+                }else if (ifsccode.isEmpty()){
+                    Toast.makeText(RegisterUser.this, "Enter IFSC code", Toast.LENGTH_SHORT).show();
+                }else if (bankname.isEmpty()){
+                    Toast.makeText(RegisterUser.this, "Enter Bank Name", Toast.LENGTH_SHORT).show();
+                }else if (BAHname.isEmpty()){
+                    Toast.makeText(RegisterUser.this, "Enter Bank Account Holder name", Toast.LENGTH_SHORT).show();
+                }else {
 
-                    registerUser(uName,uMobile,uMail,uAddress);
+                    registerUser(uName,uMobile,uMail,uAddress,nominee,Baccountno,ifsccode,bankname,BAHname);
                 }
                 
             }
@@ -75,7 +92,7 @@ public class RegisterUser extends AppCompatActivity {
 
     }
 
-    private void registerUser(String uName, String uMobile, String uMail, String uAddress) {
+    private void registerUser(String uName, String uMobile, String uMail, String uAddress, String nominee, String baccountno, String ifsccode, String bankname, String BAHname) {
         ProgressDialog dialog = new ProgressDialog(RegisterUser.this);
         dialog.setCancelable(false);
         dialog.setMessage("Please wait..");
@@ -90,7 +107,7 @@ public class RegisterUser extends AppCompatActivity {
 
         String TodayDate = dateFormat.format(currentDate);
 
-        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/registerUser.php?Name="+uName+"&Mobile="+uMobile+"&Email="+uMail+"&Address="+uAddress+"&Password="+uMobile+"&ReferalCode=SSG-"+RMobile+"&Product="+product+"&RegisterDate="+TodayDate+"&AccountID=SSG-"+uMobile+"", new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/registerUser.php?Name="+uName+"&Mobile="+uMobile+"&Email="+uMail+"&Address="+uAddress+"&Password="+uMobile+"&ReferalCode=SSG-"+RMobile+"&Product="+product+"&RegisterDate="+TodayDate+"&AccountID=SSG-"+uMobile+"&Nominee="+nominee+" &BAccountNo="+baccountno+"&IfscCode="+ifsccode+"&BankName="+bankname+"&BAHname="+BAHname+"", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.equals("exits")){
@@ -110,7 +127,7 @@ public class RegisterUser extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(RegisterUser.this, "Something went wrong try later..", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterUser.this, "Something went wrong try later", Toast.LENGTH_SHORT).show();
                 Log.e("UserRegisterLog",error.getMessage());
                 dialog.dismiss();
             }

@@ -25,6 +25,8 @@ import org.json.JSONObject;
 public class UserProfile extends AppCompatActivity {
 
     TextView AcIdTV,NameTV,mobileTV,EmailTV,AddressTV,referTV,CcountTV,TcountTV;
+
+    TextView AHnameTV,BankNameTV,BAccountNoTV,IFSCTV,NomineeTV;
     ProgressDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,12 @@ public class UserProfile extends AppCompatActivity {
         referTV = findViewById(R.id.referTV);
         CcountTV = findViewById(R.id.CcountTV);
         TcountTV = findViewById(R.id.TcountTV);
+
+        AHnameTV = findViewById(R.id.AHnameTV);
+        BankNameTV = findViewById(R.id.BankNameTV);
+        BAccountNoTV = findViewById(R.id.BAccountNoTV);
+        IFSCTV = findViewById(R.id.IFSCTV);
+        NomineeTV = findViewById(R.id.NomineeTV);
 
 
         dialog = new ProgressDialog(UserProfile.this);
@@ -84,6 +92,17 @@ public class UserProfile extends AppCompatActivity {
                             String RegisterUnder = object.getString("ReferalCode");
                             String AccountID = object.getString("AccountID");
 
+                            String AHname = object.getString("BAHname");
+                            String BankName = object.getString("BankName");
+                            String BAccountNo = object.getString("BAccountNo");
+                            String IfscCode = object.getString("IfscCode");
+                            String Nominee = object.getString("Nominee");
+
+                            AHnameTV.setText(AHname);
+                            BankNameTV.setText(BankName);
+                            BAccountNoTV.setText(BAccountNo);
+                            IFSCTV.setText(IfscCode);
+                            NomineeTV.setText(Nominee);
 
                             AcIdTV.setText(AccountID);
                             NameTV.setText(Name);
