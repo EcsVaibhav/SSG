@@ -46,14 +46,15 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
 
                 closeKeyboard();
-                Username = UsernameEt.getText().toString().trim();
+                Username = UsernameEt.getText().toString().trim().toUpperCase();
                 Password = PasswordEt.getText().toString().trim();
 
-                if (Username.length() != 10) {
-                    Toast.makeText(Login.this, "Please Enter Valid Mobile Number", Toast.LENGTH_SHORT).show();
+                if (Username.isEmpty()) {
+                    Toast.makeText(Login.this, "Please Enter Username", Toast.LENGTH_SHORT).show();
                 } else if (Password.isEmpty()) {
                     Toast.makeText(Login.this, "Please Enter Password..", Toast.LENGTH_SHORT).show();
                 } else {
+
 
                     LoginValidation(Username,Password);
 
@@ -69,12 +70,12 @@ public class Login extends AppCompatActivity {
         dialog.show();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/loginUser.php?Password="+password+"&Mobile="+username+"", new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/loginUser.php?Password="+password+"&AccountID="+username+"", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 if (response.equals("notfound")){
-                    Toast.makeText(Login.this, "Please enter correct Mobile and Password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Please enter correct Username and Password", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 }else {
 
@@ -84,18 +85,18 @@ public class Login extends AppCompatActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
 
-                            String Mobile = object.getString("Mobile");
+                            String AccountID = object.getString("AccountID");
                             String Password = object.getString("Password");
 
-                            if (Mobile.equals(Password)) {
+                            if (AccountID.equals(Password)) {
                                 Intent in = new Intent(Login.this, UpdatePassword.class);
-                                in.putExtra("Mobile", Mobile);
+                                in.putExtra("AccountID", AccountID);
                                 startActivity(in);
                                 finish();
 
                             } else {
 
-                                editor.putString("Username", Username);
+                                editor.putString("Username", AccountID);
                                 editor.apply();
                                 startActivity(new Intent(Login.this, RegisterDashboard.class));
                                 finish();

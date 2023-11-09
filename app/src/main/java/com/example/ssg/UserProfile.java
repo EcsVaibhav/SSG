@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ public class UserProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
+        navBar();
 
         AcIdTV = findViewById(R.id.AcIdTV);
         NameTV = findViewById(R.id.NameTV);
@@ -54,6 +56,7 @@ public class UserProfile extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.setMessage("Please wait..");
         dialog.show();
+
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +66,33 @@ public class UserProfile extends AppCompatActivity {
 
         getData();
     }
+    private void navBar() {
+
+        RelativeLayout HomeRLBtn,StageRLBtn,ProfileRLBtn;
+        HomeRLBtn = findViewById(R.id.HomeRLBtn);
+        StageRLBtn = findViewById(R.id.StageRLBtn);
+        ProfileRLBtn = findViewById(R.id.ProfileRLBtn);
+
+        StageRLBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(UserProfile.this,Stage.class);
+                overridePendingTransition(0,0);
+                startActivity(in);
+                finish();
+            }
+        });
+        HomeRLBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(UserProfile.this,RegisterDashboard.class);
+                overridePendingTransition(0,0);
+                startActivity(in);
+                finish();
+            }
+        });
+
+    }
 
 
     private void getData() {
@@ -70,7 +100,7 @@ public class UserProfile extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
         String UserMobile = sharedPreferences.getString("Username"," ");
-        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/getUserdetails.php?Mobile="+UserMobile+"", new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/getUserdetails.php?AccountID="+UserMobile+"", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 

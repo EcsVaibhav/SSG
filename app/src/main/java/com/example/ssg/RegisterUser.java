@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,6 +20,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,6 +66,28 @@ public class RegisterUser extends AppCompatActivity {
                 String bankname = BanknameET.getText().toString().trim();
                 String BAHname = BAHnameET.getText().toString().trim();
 
+                if(uMail.isEmpty()){
+                    uMail = "null";
+                }
+                if (uAddress.isEmpty()){
+                    uAddress = "null";
+                }
+                if (nominee.isEmpty()){
+                    nominee = "null";
+                }
+                if (Baccountno.isEmpty()){
+                    Baccountno = "null";
+                }
+                if (ifsccode.isEmpty()){
+                    ifsccode = "null";
+                }
+                if (bankname.isEmpty()){
+                    bankname = "null";
+                }
+                if (BAHname.isEmpty()){
+                    BAHname = "null";
+                }
+
                 if (uName.isEmpty()){
                     Toast.makeText(RegisterUser.this, "Please enter Name", Toast.LENGTH_SHORT).show();
                 }else if (uMobile.length()!=10){
@@ -69,19 +96,10 @@ public class RegisterUser extends AppCompatActivity {
                     Toast.makeText(RegisterUser.this, "Enter Valid Email", Toast.LENGTH_SHORT).show();
                 }else if (uAddress.isEmpty()){
                     Toast.makeText(RegisterUser.this, "Enter Address", Toast.LENGTH_SHORT).show();
-                }else if (nominee.isEmpty()){
-                    Toast.makeText(RegisterUser.this, "Enter Nominee", Toast.LENGTH_SHORT).show();
-                }else if (Baccountno.isEmpty()){
-                    Toast.makeText(RegisterUser.this, "Enter Bank account number", Toast.LENGTH_SHORT).show();
-                }else if (ifsccode.isEmpty()){
-                    Toast.makeText(RegisterUser.this, "Enter IFSC code", Toast.LENGTH_SHORT).show();
-                }else if (bankname.isEmpty()){
-                    Toast.makeText(RegisterUser.this, "Enter Bank Name", Toast.LENGTH_SHORT).show();
-                }else if (BAHname.isEmpty()){
-                    Toast.makeText(RegisterUser.this, "Enter Bank Account Holder name", Toast.LENGTH_SHORT).show();
                 }else {
 
-                    registerUser(uName,uMobile,uMail,uAddress,nominee,Baccountno,ifsccode,bankname,BAHname);
+
+                   registerUser(uName,uMobile,uMail,uAddress,nominee,Baccountno,ifsccode,bankname,BAHname);
                 }
                 
             }
@@ -91,6 +109,22 @@ public class RegisterUser extends AppCompatActivity {
         
 
     }
+
+    private void sendSMS(String UMobile, String accountID) {
+
+        String message = "Congratulation You are successfully register with SSG.\nYour Username is : "+accountID+" \nYour Password is : "+accountID+"";
+
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(UMobile, null, message, null, null);
+            Toast.makeText(getApplicationContext(), "Username and Password sent To Mobile number", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            //Toast.makeText(getApplicationContext(), "SMS failed to send."+e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     private void registerUser(String uName, String uMobile, String uMail, String uAddress, String nominee, String baccountno, String ifsccode, String bankname, String BAHname) {
         ProgressDialog dialog = new ProgressDialog(RegisterUser.this);
@@ -107,27 +141,49 @@ public class RegisterUser extends AppCompatActivity {
 
         String TodayDate = dateFormat.format(currentDate);
 
-        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/registerUser.php?Name="+uName+"&Mobile="+uMobile+"&Email="+uMail+"&Address="+uAddress+"&Password="+uMobile+"&ReferalCode=SSG-"+RMobile+"&Product="+product+"&RegisterDate="+TodayDate+"&AccountID=SSG-"+uMobile+"&Nominee="+nominee+" &BAccountNo="+baccountno+"&IfscCode="+ifsccode+"&BankName="+bankname+"&BAHname="+BAHname+"", new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/registerUser.php?Name="+uName+"&Mobile="+uMobile+"&Email="+uMail+"&Address="+uAddress+"&ReferalCode=SSG-"+RMobile+"&Product="+product+"&RegisterDate="+TodayDate+"&Nominee="+nominee+" &BAccountNo="+baccountno+"&IfscCode="+ifsccode+"&BankName="+bankname+"&BAHname="+BAHname+"", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (response.equals("exits")){
-                    Toast.makeText(RegisterUser.this, "Mobile Number Already exits.", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                }else if (response.equals("inserted")){
-                    Toast.makeText(RegisterUser.this, "Registration Successfully", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(RegisterUser.this,RegisterDashboard.class));
-                    finishAffinity();
-                    dialog.dismiss();
-                }else {
+                if (response.equals("failed")){
                     Toast.makeText(RegisterUser.this, "Something went wrong try later...", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
+                }else if (response.isEmpty()){
+
+                    Toast.makeText(RegisterUser.this, "Something went wrong try later...", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+                }else if(response.equals("notfound")){
+                    Toast.makeText(RegisterUser.this, "Technical error contact Customer care", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }else {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0;i<jsonArray.length();i++){
+                            JSONObject object = jsonArray.getJSONObject(i);
+
+                            String UMobile = object.getString("Mobile");
+                            String AccountID = object.getString("AccountID");
+
+                            sendSMS(UMobile,AccountID);
+                            Toast.makeText(RegisterUser.this, "Registration Successfully", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(RegisterUser.this,RegisterDashboard.class));
+                            finishAffinity();
+                            dialog.dismiss();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(RegisterUser.this, "Technical error contact Customer care", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+
+
                 }
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(RegisterUser.this, "Something went wrong try later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterUser.this, "Something went wrong try later"+error.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.e("UserRegisterLog",error.getMessage());
                 dialog.dismiss();
             }

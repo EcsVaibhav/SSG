@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -11,13 +12,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +39,7 @@ import meow.bottomnavigation.MeowBottomNavigation;
 
 public class RegisterDashboard extends AppCompatActivity {
 
-    MeowBottomNavigation bottomNavigation;
+
     ImageView menuBtn;
 
     TextView CcountTV,TcountTV;
@@ -51,7 +55,7 @@ public class RegisterDashboard extends AppCompatActivity {
         TcountTV = findViewById(R.id.TcountTV);
 
         sharedPreferences = getSharedPreferences("LoginData", Context.MODE_PRIVATE);
-        String Umobile = sharedPreferences.getString("Username"," ");
+        String UAccountID = sharedPreferences.getString("Username"," ");
         menuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,6 +88,8 @@ public class RegisterDashboard extends AppCompatActivity {
             }
         });
 
+
+        navBar();
 
 
         findViewById(R.id.oneBtn).setOnClickListener(new View.OnClickListener() {
@@ -127,16 +133,42 @@ public class RegisterDashboard extends AppCompatActivity {
         });
 
 
-        getRcount(Umobile);
+        getRcount();
     }
 
-    private void getRcount(String mob) {
+    private void navBar() {
+
+        RelativeLayout HomeRLBtn,StageRLBtn,ProfileRLBtn;
+        HomeRLBtn = findViewById(R.id.HomeRLBtn);
+        StageRLBtn = findViewById(R.id.StageRLBtn);
+        ProfileRLBtn = findViewById(R.id.ProfileRLBtn);
+
+        StageRLBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(RegisterDashboard.this,Stage.class);
+                overridePendingTransition(0,0);
+                startActivity(in);
+            }
+        });
+        ProfileRLBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(RegisterDashboard.this,UserProfile.class);
+                overridePendingTransition(0,0);
+                startActivity(in);
+            }
+        });
+
+    }
+
+    private void getRcount() {
 
         ProgressDialog dialog = new ProgressDialog(RegisterDashboard.this);
         dialog.setCancelable(false);
         dialog.setMessage("Please wait..");
         dialog.show();
-        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/getRegistrationCount.php?Referby=SSG-"+mob+"", new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/getRegistrationCount.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
@@ -148,10 +180,10 @@ public class RegisterDashboard extends AppCompatActivity {
                         JSONObject object = jsonArray.getJSONObject(i);
 
                         String Ccount = object.getString("Ccount");
-                        String Tcount = object.getString("Tcount");
+                        int Tcount = Integer.parseInt(object.getString("Tcount"));
 
                         CcountTV.setText(Ccount);
-                        TcountTV.setText(Tcount);
+                        TcountTV.setText(String.valueOf(Tcount-1));
 
                         dialog.dismiss();
 

@@ -22,7 +22,7 @@ import com.android.volley.toolbox.Volley;
 public class UpdatePassword extends AppCompatActivity {
 
     EditText hidepasswordET,confrimPasswordET;
-    String hidepassword,confrimPassword,UserMobile;
+    String hidepassword,confrimPassword,UserAccountID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +38,10 @@ public class UpdatePassword extends AppCompatActivity {
                 closeKeyboard();
                 hidepassword = hidepasswordET.getText().toString().trim();
                 confrimPassword = confrimPasswordET.getText().toString().trim();
-                UserMobile = getIntent().getStringExtra("Mobile");
+                UserAccountID = getIntent().getStringExtra("AccountID");
 
                 if (hidepassword.equals(confrimPassword)){
-                    resetpassword(confrimPassword,UserMobile);
+                    resetpassword(confrimPassword,UserAccountID);
                 }else {
                     Toast.makeText(UpdatePassword.this, "password and confirm password not match", Toast.LENGTH_SHORT).show();
                 }
@@ -49,14 +49,14 @@ public class UpdatePassword extends AppCompatActivity {
         });
     }
 
-    private void resetpassword(String confrimPassword, String userMobile) {
+    private void resetpassword(String confrimPassword, String userAccountID) {
 
         ProgressDialog dialog = new ProgressDialog(UpdatePassword.this);
         dialog.setCancelable(false);
         dialog.setMessage("Please wait..");
         dialog.show();
 
-        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/resetPassword.php?Password="+confrimPassword+"&Mobile="+userMobile+"", new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/resetPassword.php?Password="+confrimPassword+"&AccountID="+userAccountID+"", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
