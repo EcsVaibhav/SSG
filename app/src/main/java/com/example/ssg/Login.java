@@ -1,13 +1,17 @@
 package com.example.ssg;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -23,6 +27,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Objects;
 
 public class Login extends AppCompatActivity {
 
@@ -56,7 +62,7 @@ public class Login extends AppCompatActivity {
                 } else {
 
 
-                    LoginValidation(Username,Password);
+                    LoginValidation(Username, Password);
 
                 }
             }
@@ -70,14 +76,14 @@ public class Login extends AppCompatActivity {
         dialog.show();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/loginUser.php?Password="+password+"&AccountID="+username+"", new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, "http://tsm.ecssofttech.com/SSG_PHP/loginUser.php?Password=" + password + "&AccountID=" + username + "", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                if (response.equals("notfound")){
+                if (response.equals("notfound")) {
                     Toast.makeText(Login.this, "Please enter correct Username and Password", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
-                }else {
+                } else {
 
                     try {
                         JSONArray jsonArray = new JSONArray(response);
@@ -87,20 +93,30 @@ public class Login extends AppCompatActivity {
 
                             String AccountID = object.getString("AccountID");
                             String Password = object.getString("Password");
+                            String AStatus = object.getString("AStatus");
 
-                            if (AccountID.equals(Password)) {
-                                Intent in = new Intent(Login.this, UpdatePassword.class);
-                                in.putExtra("AccountID", AccountID);
-                                startActivity(in);
-                                finish();
+                            if (AStatus.equals("pending")) {
+
+                                dialog.dismiss();
+                                checkAccountstatus();
+
 
                             } else {
 
-                                editor.putString("Username", AccountID);
-                                editor.apply();
-                                startActivity(new Intent(Login.this, RegisterDashboard.class));
-                                finish();
+                                if (AccountID.equals(Password)) {
+                                    Intent in = new Intent(Login.this, UpdatePassword.class);
+                                    in.putExtra("AccountID", AccountID);
+                                    startActivity(in);
+                                    finish();
 
+                                } else {
+
+                                    editor.putString("Username", AccountID);
+                                    editor.apply();
+                                    startActivity(new Intent(Login.this, RegisterDashboard.class));
+                                    finish();
+
+                                }
                             }
                         }
 
@@ -118,7 +134,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(Login.this, "Something went wrong try later..", Toast.LENGTH_SHORT).show();
-                Log.e("UserLoginLog",error.getMessage());
+                Log.e("UserLoginLog", Objects.requireNonNull(error.getMessage()));
                 dialog.dismiss();
             }
         });
@@ -127,8 +143,29 @@ public class Login extends AppCompatActivity {
         queue.add(request);
     }
 
-    private void closeKeyboard()
-    {
+    private void checkAccountstatus() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
+
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_for_accountstatus, null);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogView.findViewById(R.id.Okaybtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Login.this,Login.class));
+                finish();
+
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void closeKeyboard() {
 
         View view = this.getCurrentFocus();
 

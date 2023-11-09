@@ -27,7 +27,7 @@ public class UserProfile extends AppCompatActivity {
 
     TextView AcIdTV,NameTV,mobileTV,EmailTV,AddressTV,referTV,CcountTV,TcountTV;
 
-    TextView AHnameTV,BankNameTV,BAccountNoTV,IFSCTV,NomineeTV;
+    TextView AHnameTV,BankNameTV,BAccountNoTV,IFSCTV,NomineeTV,PidcountTV;
     ProgressDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,8 @@ public class UserProfile extends AppCompatActivity {
         referTV = findViewById(R.id.referTV);
         CcountTV = findViewById(R.id.CcountTV);
         TcountTV = findViewById(R.id.TcountTV);
+        PidcountTV = findViewById(R.id.PidcountTV);
+
 
         AHnameTV = findViewById(R.id.AHnameTV);
         BankNameTV = findViewById(R.id.BankNameTV);
@@ -115,6 +117,7 @@ public class UserProfile extends AppCompatActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
 
+                            String IdCount = object.getString("IdCount");
                             String Name = object.getString("Name");
                             String Mobile = object.getString("Mobile");
                             String Email = object.getString("Email");
@@ -128,6 +131,7 @@ public class UserProfile extends AppCompatActivity {
                             String IfscCode = object.getString("IfscCode");
                             String Nominee = object.getString("Nominee");
 
+                            PidcountTV.setText("My Total ID \n"+IdCount);
                             AHnameTV.setText(AHname);
                             BankNameTV.setText(BankName);
                             BAccountNoTV.setText(BAccountNo);
